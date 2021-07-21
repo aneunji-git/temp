@@ -7,21 +7,21 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DetailView, UpdateView, DeleteView
 from accountapp.forms import AccountCreationForm
 from accountapp.models import HelloWorld
-def hello_world(request):
+    def hello_world(request):
 
-    if request.user.is_authenticated:
+        if request.user.is_authenticated:
 
-        if request.method == "POST":
-            temp = request.POST.get('input')
-            new_data = HelloWorld()
-            new_data.text = temp
-            new_data.save()
-            return HttpResponseRedirect(reverse('accountapp:hello_world'))
+            if request.method == "POST":
+                temp = request.POST.get('input')
+                new_data = HelloWorld()
+                new_data.text = temp
+                new_data.save()
+                return HttpResponseRedirect(reverse('accountapp:hello_world'))
+            else:
+                data_list = HelloWorld.objects.all()
+                return render(request, 'accountapp/hello_world.html', context={'data_list': data_list})
         else:
-            data_list = HelloWorld.objects.all()
-            return render(request, 'accountapp/hello_world.html', context={'data_list': data_list})
-    else:
-        return HttpResponseRedirect(reverse('accountapp:login'))
+            return HttpResponseRedirect(reverse('accountapp:login'))
 
 class AccountCreateView(CreateView):
     model = User
