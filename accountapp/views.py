@@ -8,15 +8,21 @@ from django.views.generic import CreateView, DetailView, UpdateView, DeleteView
 from accountapp.forms import AccountCreationForm
 from accountapp.models import HelloWorld
 def hello_world(request):
-    if request.method == "POST":
-        temp = request.POST.get('input')
-        new_data = HelloWorld()
-        new_data.text = temp
-        new_data.save()
-        return HttpResponseRedirect(reverse('accountapp:hello_world'))
+
+    if request.user.is_authenticated:
+
+        if request.method == "POST":
+            temp = request.POST.get('input')
+            new_data = HelloWorld()
+            new_data.text = temp
+            new_data.save()
+            return HttpResponseRedirect(reverse('accountapp:hello_world'))
+        else:
+            data_list = HelloWorld.objects.all()
+            return render(request, 'accountapp/hello_world.html', context={'data_list': data_list})
     else:
-        data_list = HelloWorld.objects.all()
-        return render(request, 'accountapp/hello_world.html', context={'data_list': data_list})
+        return HttpResponseRedirect(reverse('accountapp:login'))
+
 class AccountCreateView(CreateView):
     model = User
     form_class = UserCreationForm
@@ -32,8 +38,34 @@ class AccountUpdateView(UpdateView):
     context_object_name = 'target_user'
     success_url = reverse_lazy('accountapp:hello_world')
     template_name = 'accountapp/update.html'
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return super().get(request, *args, **kwargs)
+        else:
+            return HttpResponseRedirect('accountapp:login')
+        
+
+    def post(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return super().post(request, *args, **kwargs)
+        else:
+            return HttpResponseRedirect('accountapp:login')
+
 class AccountDeleteView(DeleteView):
     model = User
     context_object_name = 'target_user'
     success_url = reverse_lazy('accountapp:hello_world')
     template_name = 'accountapp/delete.html'
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return super().get(request, *args, **kwargs)
+        else:
+            return HttpResponseRedirect('accountapp:login')
+
+    def post(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return super().post(request, *args, **kwargs)
+        else:
+            return HttpResponseRedirect('accountapp:login')
