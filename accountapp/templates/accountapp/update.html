@@ -2,12 +2,12 @@
 {% load bootstrap4 %}
 
 {% block content %}
-    <div class="text-center">
+    <div class="text-center mw-500 m-auto">
         <div class="m-5">
             <h4>Update Info</h4>
         </div>
-        <div class = "text-center mw-500 m-auto">
-            <form action="{% url 'accountapp:update' pk = target_user.pk %}" method="post">
+        <div>
+            <form action="{% url 'accountapp:update' pk=target_user.pk %}" method="post">
                 {% csrf_token %}
                 {% bootstrap_form form %}
                 <div class="m-5">
